@@ -122,15 +122,6 @@ class MasterClass {
 
 		}
 
-		function position() {
-
-			var mapwidth = getDimensions($('#map'))
-
-			var percentage = 100 / mapwidth[1] * self.y
-
-			return (percentage > 50 ) ? 'top' : 'bottom'
-		}
-
 		var styled = L.gridLayer.googleMutant({
 
 		    type: 'roadmap',
@@ -149,7 +140,7 @@ class MasterClass {
 
         	var datum = data.feature.properties
 
-        	datum.COMP = (datum.COMP!=null) ? datum.COMP.replace(/,/g, '<br>') : (datum.LEASE_TYPE==='Exploration Release Area') ? 'An area that comapnies can make bids on exploration permits for' : 'Not specified' ;
+        	datum.COMP = (datum.COMP!=null) ? datum.COMP.replace(/,/g, '<br>') : (datum.LEASE_TYPE==='Exploration Release Area') ? 'An area that comapnies can make <br/>bids on exploration permits for' : 'Not specified' ;
 
 			(datum.COMP!=null) ? datum.COMP = datum.COMP.replace(/;/g, '<br>') : '' ;
 
@@ -159,9 +150,7 @@ class MasterClass {
 
         }, {
 
-  			sticky: true,
-
-  			direction: position()
+  			sticky: true
 
 		}).addTo(self.map);
 
