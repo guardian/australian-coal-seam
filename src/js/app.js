@@ -102,7 +102,7 @@ class MasterClass {
 
 		        color: 'white',
 
-		        fillOpacity: 1,
+		        fillOpacity: 0.7,
 
 		        fillColor: getColour(feature.properties.LEASE_TYPE)
 
