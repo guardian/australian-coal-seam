@@ -53,7 +53,7 @@ class MasterClass {
 
     topo() {
 
-    	this.topo = topojson.feature(tenements, tenements.objects.onshore_tenements)
+    	this.topo = topojson.feature(tenements, tenements.objects.permits)
 
     	//console.log(this.topo)
 
