@@ -2,8 +2,8 @@
 import GoogleMapsLoader from 'google-maps';
 import mapstyles from './data/mapstyles.json'
 import tenements from './data/onshore-tenements.json'
-import L from './components/leaflet.js' // Check it out... https://blog.webkid.io/rarely-used-leaflet-features/
-import './components/Leaflet.GoogleMutant.js'
+import L from 'leaflet' // Check it out... https://blog.webkid.io/rarely-used-leaflet-features/
+import './components/Leaflet.GoogleMutant'
 import * as topojson from "topojson"
 import { $, $$, round, numberWithCommas, wait, getDimensions } from './modules/util'
 import tooltip from './templates/tooltip.html'

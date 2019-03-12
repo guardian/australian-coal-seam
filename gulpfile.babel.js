@@ -18,6 +18,7 @@ import runSequence from 'run-sequence'
 import source from 'vinyl-source-stream'
 import named from 'vinyl-named'
 import buffer from 'vinyl-buffer'
+import replace from 'gulp-replace'
 
 import webpack from 'webpack'
 import ws from 'webpack-stream'
@@ -57,15 +58,10 @@ let webpackPlugins = [
                 plugins
             }
         }
-    }),
-    new webpack.DefinePlugin({
-        'process.env': {
-            'PATH': JSON.stringify(path)
-        }
     })
 ];
 
-if (isDeploy) webpackPlugins.push(new UglifyJSPlugin);
+if (isDeploy) webpackPlugins.push(new UglifyJSPlugin({ sourceMap : true }));
 
 function buildJS(filename) {
     return () => {
@@ -73,12 +69,13 @@ function buildJS(filename) {
             .pipe(named())
             .pipe(ws({
                 watch: false,
+                mode: isDeploy ? 'production' : 'development',
                 module: {
-                    loaders: [{
-                        test: /\.css$/,
-                        loader: 'style!css'
-                    }, ],
                     rules: [
+                        {
+                            test: /\.css$/,
+                            loader: 'style!css'
+                        },
                         {
                             test: /\.js$/,
                             exclude: /node_modules/,
@@ -93,9 +90,10 @@ function buildJS(filename) {
                 devtool: 'source-map',
                 plugins: webpackPlugins
             }, webpack))
-            .on('error', function handleError() {
+            .on('error', function handleError(e) {
                 this.emit('end'); // Recover from errors
             })
+            .pipe(replace('<%= path %>', path))
             .pipe(gulp.dest(buildDir));
 
     }
@@ -132,9 +130,10 @@ gulp.task('build:css', () => {
             'outputStyle': isDeploy ? 'compressed' : 'expanded'
         }).on('error', sass.logError))
         .pipe(sourcemaps.write('.'))
-        .pipe(template({
-            path
-        }))
+        // .pipe(template({
+        //     path
+        // }))
+        .pipe(replace('<%= path %>', path))
         .pipe(gulp.dest(buildDir))
         .pipe(browser.stream({
             'match': '**/*.css'
@@ -153,9 +152,7 @@ gulp.task('build:html', cb => {
             file('main.html', html, {
                     'src': true
                 })
-                .pipe(template({
-                    path
-                }))
+                .pipe(replace('<%= path %>', path))
                 .pipe(gulp.dest(buildDir))
                 .on('end', cb);
         }).catch(err => {
@@ -213,6 +210,7 @@ gulp.task('local', ['build'], () => {
             'html': readOpt(`${buildDir}/main.html`),
             'js': readOpt(`${buildDir}/main.js`)
         }))
+        .pipe(replace('<%= path %>', path))
         .pipe(gulp.dest(buildDir));
 });
 
@@ -223,6 +221,7 @@ gulp.task('local:html', ['build:html'], () => {
             'html': readOpt(`${buildDir}/main.html`),
             'js': readOpt(`${buildDir}/main.js`)
         }))
+        .pipe(replace('<%= path %>', path))
         .pipe(gulp.dest(buildDir));
 });
 
